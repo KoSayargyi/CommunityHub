@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AppUserInitializer {
@@ -28,7 +30,7 @@ public class AppUserInitializer {
             user.setActive(true);
             user.setRole(User.Role.ADMIN);
             user.setPassword(passwordEncoder.encode("admin"));
-            user.setPhone("09978564121");
+            user.setPhone(List.of("09978564121"));
             user.setStaffId("99-00001");
             userRepository.save(user);
         }

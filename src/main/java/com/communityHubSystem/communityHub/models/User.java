@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,13 +24,13 @@ public class User implements Serializable {
     private String email;
     private String password;
     private String photo;
-    private String phone;
+    private List<String> phone;
     private String division;
     private String staffId;
     private Long doorLogNum;
     private String dept;
     private String team;
-    private String hobby;
+    private List<String> hobby;
     private String gender;
     private boolean isActive;
     @Enumerated(EnumType.STRING)
