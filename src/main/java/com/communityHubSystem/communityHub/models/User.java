@@ -24,13 +24,13 @@ public class User implements Serializable {
     private String email;
     private String password;
     private String photo;
-    private List<String> phone;
+    private String  phone;
     private String division;
     private String staffId;
     private Long doorLogNum;
     private String dept;
     private String team;
-    private List<String> hobby;
+    private String hobby;
     private String gender;
     private boolean isActive;
     @Enumerated(EnumType.STRING)
