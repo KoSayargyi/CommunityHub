@@ -27,6 +27,8 @@ public class Post implements Serializable {
     private Date created_date;
     private Date start_date;
     private Date end_date;
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
