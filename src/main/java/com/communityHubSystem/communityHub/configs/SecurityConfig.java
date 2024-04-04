@@ -29,7 +29,8 @@ public class SecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/"));
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/signIn", "/ws/**", "css", "js").permitAll()
+                .requestMatchers("/", "/signIn", "/ws/**", "/assets/**", "/forms/**","/static/**").permitAll()
+                .requestMatchers("/css/**","/img/**","/js/**","/scss/**","/vendor/**").permitAll()
                 .requestMatchers("/user/**").hasAnyAuthority(User.Role.USER.name(), User.Role.ADMIN.name())
                 .requestMatchers("/admin/**").hasAnyAuthority(User.Role.ADMIN.name())
                 .anyRequest().authenticated());
