@@ -19,33 +19,12 @@ if (!validExtensions.includes(fileName.split('.').pop())) {
 
 
 async function createPost(){
-    // const fileInput = document.getElementById("file");
-    // const files = fileInput.files;
-    // console.log(files)
-    // const elon = [];
-
-
     let data = new FormData(document.getElementById('postForm'))
     console.log(data)
-
-    //   for (let i = 0; i < files.length; i++) {
-    //     elon.push(files[i]);
-    //     console.log(files[i].fileName)
-    // data.append("file[]", files[i]);
-    // }
-    // const postData = {
-    //     content : document.getElementById('content').value.trim(),
-    //     files : elon
-    // }
-    // console.log(data.append('postData',postData))
-    // console.log(postData)
-    //     console.log(elon)
-    // // data.append("files[]",files)
-    // data.append("files[]",elon)
-    //     console.log(Object.fromEntries(data.entries()))
     let response = await fetch('/post/createPublicPost',{
         method : 'POST',
         body : data
     })
     console.log(response)
 }
+

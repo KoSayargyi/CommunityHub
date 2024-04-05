@@ -11,4 +11,8 @@ public class UserController {
     public String goToCreatePost(){
         return "/pages-blank";
     }
+    @GetMapping("/home")
+    public String goToHome(){
+        return "/user/home";
+    }
 }

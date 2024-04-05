@@ -1,5 +1,5 @@
 package com.communityHubSystem.communityHub.controllers;
-import com.communityHubSystem.communityHub.DTO.UserDTO;
+import com.communityHubSystem.communityHub.dto.UserDTO;
 import com.communityHubSystem.communityHub.models.User;
 import com.communityHubSystem.communityHub.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 @Configuration
 public class CloudConfig {
+
     private final String CLOUD_NAME = "dws6icl91";
     private final String API_KEY = "861442768946264";
     private final String API_SECRET = "64TznD35NYGem1UsVLxz4GD5e88";

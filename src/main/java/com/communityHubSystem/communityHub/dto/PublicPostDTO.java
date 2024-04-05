@@ -14,4 +14,5 @@ public class PublicPostDTO {
     private String content;
     private MultipartFile file;
 //    private MultipartFile[] files;
+
 }

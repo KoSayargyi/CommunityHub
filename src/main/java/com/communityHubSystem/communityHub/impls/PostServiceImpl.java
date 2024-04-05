@@ -1,5 +1,4 @@
 package com.communityHubSystem.communityHub.impls;
-
 import com.cloudinary.Cloudinary;
 import com.communityHubSystem.communityHub.DTO.PublicPostDTO;
 import com.communityHubSystem.communityHub.models.Post;
@@ -74,7 +73,6 @@ public class PostServiceImpl implements PostService {
         saveResource.setDate(new Date());
         resourceRepository.save(saveResource);
         return savedPost;
-//        return null;
     }
 
     private boolean isValidPhotoExtension(String extension) {
@@ -84,4 +82,5 @@ public class PostServiceImpl implements PostService {
     private boolean isValidVideoExtension(String extension) {
         return videoExtensions.contains(extension);
     }
+
 }
