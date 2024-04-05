@@ -1,26 +1,32 @@
 package com.communityHubSystem.communityHub.impls;
 
-import com.communityHubSystem.communityHub.DTO.UserDTO;
+import com.communityHubSystem.communityHub.dto.UserDTO;
 import com.communityHubSystem.communityHub.models.*;
 import com.communityHubSystem.communityHub.repositories.UserRepository;
+import com.communityHubSystem.communityHub.services.ExcelUploadService;
 import com.communityHubSystem.communityHub.services.UserService;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PasswordEncoder passwordEncoder;
+
+
+    private final UserRepository userRepository;
+    private final ExcelUploadService excelUploadService;
+
+    @Transactional
     @Override
     public void updateUserData(User user) {
     userRepository.findById(user.getId()).ifPresent(user1 -> {
@@ -40,6 +46,8 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUser() {
         return userRepository.findAll();
     }
+
+
 
     @Override
     public List<User> searchMethod(UserDTO userDTO) {
@@ -92,6 +100,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(userSpec);
     }
 
+    @Override
+    public Optional<User> findByStaffId(String staffId) {
+        return userRepository.findByStaffId(staffId);
+    }
+
+    @Override
+    public User findById(Long id) {
+      return userRepository.findById(id).orElseThrow();
+    }
+
     public static Specification<User> getUserFromSkill(List<String > skillNameList){
         return (root, query, criteriaBuilder) -> {
             if(!skillNameList.isEmpty()){
@@ -107,6 +125,17 @@ public class UserServiceImpl implements UserService {
         };
     }
 
+    @Override
+    public void saveUserToDatabase(MultipartFile file){
+        if(excelUploadService.isValidExcelFile(file)){
+            try {
+                List<User> employeeData = excelUploadService.getEmployeeDataFromExcel(file.getInputStream());
+                this.userRepository.saveAll(employeeData);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("The file is not a valid excel file");
+            }
+        }
+    }
 
 
 

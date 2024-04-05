@@ -1,4 +1,4 @@
-package com.communityHubSystem.communityHub.DTO;
+package com.communityHubSystem.communityHub.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,11 +1,16 @@
 package com.communityHubSystem.communityHub.services;
 
-import com.communityHubSystem.communityHub.DTO.PublicPostDTO;
+import com.communityHubSystem.communityHub.dto.PostDTO;
+import com.communityHubSystem.communityHub.dto.PostUpdateDTO;
 import com.communityHubSystem.communityHub.models.Post;
-import com.communityHubSystem.communityHub.models.Resource;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface PostService {
-    public Post createPublicPost(PublicPostDTO publicPostDTO) throws IOException;
+    public Post createPost(PostDTO postDTO) throws IOException;
+    public List<Post> findAllPost();
+
+    public Post updatePost(PostUpdateDTO postUpdateDTO);
+    public Post deletePost(Long id);
 }

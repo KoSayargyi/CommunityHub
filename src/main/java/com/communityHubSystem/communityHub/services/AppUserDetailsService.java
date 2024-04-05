@@ -19,7 +19,8 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String staff_id) throws UsernameNotFoundException {
         return userRepository.findByStaffId(staff_id)
-                .map(user -> User.withUsername(staff_id)
+                .map(user ->
+                        User.withUsername(staff_id)
                 .password(user.getPassword())
                 .disabled(!user.isActive())
                 .accountExpired(!user.isActive())
@@ -28,4 +29,5 @@ public class AppUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("There is no user with that staff id"));
 
     }
+
 }

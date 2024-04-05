@@ -1,13 +1,18 @@
 package com.communityHubSystem.communityHub.impls;
 
 import com.cloudinary.Cloudinary;
-import com.communityHubSystem.communityHub.DTO.PublicPostDTO;
+import com.communityHubSystem.communityHub.dto.PostDTO;
+import com.communityHubSystem.communityHub.dto.PostUpdateDTO;
+import com.communityHubSystem.communityHub.exception.CommunityHubException;
 import com.communityHubSystem.communityHub.models.Post;
 import com.communityHubSystem.communityHub.models.Resource;
+import com.communityHubSystem.communityHub.repositories.PollRepository;
 import com.communityHubSystem.communityHub.repositories.PostRepository;
 import com.communityHubSystem.communityHub.repositories.ResourceRepository;
 import com.communityHubSystem.communityHub.services.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.communityHubSystem.communityHub.services.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,24 +22,19 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    @Autowired
-    PostRepository postRepository;
-    @Autowired
-    private Cloudinary cloudinary;
-    @Autowired
-    ResourceRepository resourceRepository;
+
+    private final PollRepository pollRepository;
+    private final PostRepository postRepository;
+    private final Cloudinary cloudinary;
+    private final ResourceRepository resourceRepository;
+    private final UserService userService;
     private final List<String> photoExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif", "bmp","tiff","tif","psv","svg","webp","ico","heic");
     private final List<String> videoExtensions = Arrays.asList(".mp4", ".avi", ".mov", ".wmv" ,"mkv" ,"flv","mpeg","mpg","webm","3gp","ts");
 
-    public void createPublicPost(Post post) {
-        var resources = post.getResources();
-        for(var s : resources){
-            resourceRepository.save(s);
-        }
-        postRepository.save(post);
-    }
+
     public String uploadVideo(MultipartFile file) throws IOException {
         return cloudinary.uploader()
                 .upload(file.getBytes(), Map.of("resource_type", "video","public_id", UUID.randomUUID().toString()))
@@ -48,17 +48,25 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post  createPublicPost(PublicPostDTO publicPostDTO) throws IOException {
-        var resource = publicPostDTO.getFile();
+    public Post createPost(PostDTO postDTO) throws IOException {
+        var resource = postDTO.getFile();
         var savedUrl = "";
+        var staffId = SecurityContextHolder.getContext().getAuthentication().getName();
+        var user =  userService.findByStaffId(staffId).orElseThrow(() -> new CommunityHubException("user not found"));
         var post = new Post();
+
+        post.setPostType(checkPostType(postDTO));
         post.setCreated_date(new Date());
-        post.setDescription(publicPostDTO.getContent());
+        post.setDescription(postDTO.getContent());
+        post.setUser(user);
+
         var savedPost = postRepository.save(post);
         var saveResource = new Resource();
+
         saveResource.setPost(savedPost);
+
         var extension =  resource.getOriginalFilename().substring(resource.getOriginalFilename().lastIndexOf('.')).toLowerCase();
-        System.err.println(extension);
+
         if(isValidPhotoExtension(extension)){
             savedUrl = uploadPhoto(resource);
             saveResource.setPhoto(savedUrl);
@@ -71,10 +79,30 @@ public class PostServiceImpl implements PostService {
         }else {
             savedUrl = null;
         }
+
+
         saveResource.setDate(new Date());
         resourceRepository.save(saveResource);
         return savedPost;
-//        return null;
+    }
+
+
+
+    @Override
+    public List<Post> findAllPost() {
+        return postRepository.findAll();
+    }
+
+    @Override
+    public Post updatePost(PostUpdateDTO postUpdateDTO) {
+
+        return null;
+    }
+
+
+    @Override
+    public Post deletePost(Long id) {
+        return null;
     }
 
     private boolean isValidPhotoExtension(String extension) {
@@ -83,5 +111,57 @@ public class PostServiceImpl implements PostService {
 
     private boolean isValidVideoExtension(String extension) {
         return videoExtensions.contains(extension);
+    }
+
+    private Post.PostType checkPostType(PostDTO postDTO){
+     switch (postDTO.getPostType()){
+         case "CONTENT" -> {
+             return Post.PostType.CONTENT;
+         }
+         case "RESOURCE" -> {
+             return Post.PostType.RESOURCE;
+         }
+         case "EVENT" -> {
+             return Post.PostType.EVENT;
+         }
+         case "POLL" -> {
+             return Post.PostType.POLL;
+         }
+         default -> {
+             return null;
+         }
+     }
+    }
+
+    private void updateContentPost(PostUpdateDTO postUpdateDTO){
+        var contentPost = postRepository.findById(postUpdateDTO.getPostId()).orElseThrow(()->new CommunityHubException("post not found"));
+        contentPost.setDescription(postUpdateDTO.getDescription());
+        postRepository.save(contentPost);
+    }
+    private void updateResourcePost(PostUpdateDTO postUpdateDTO){
+        var resource = postUpdateDTO.getResources();
+        var post = postRepository.findById(postUpdateDTO.getPostId()).orElseThrow(()->new CommunityHubException("post not found"));
+        for(var r : resource){
+            var updateResource = resourceRepository.findById(r.getId()).orElseThrow(()->new CommunityHubException("resource not found"));
+            updateResource.setDate(new Date());
+            updateResource.setPost(post);
+            updateResource.setPhoto(r.getPhoto());
+            updateResource.setVideo(r.getVideo());
+            updateResource.setReacts(r.getReacts());
+            updateResource.setDescription(r.getDescription());
+            updateResource.setShares(r.getShares());
+            updateResource.setComments(r.getComments());
+            resourceRepository.save(updateResource);
+        }
+    }
+    private void updateEventPost(PostUpdateDTO postUpdateDTO){
+        var eventPost = postRepository.findById(postUpdateDTO.getPostId()).orElseThrow(()->new CommunityHubException("post not found"));
+        eventPost.setDescription(postUpdateDTO.getDescription());
+        eventPost.setStart_date(postUpdateDTO.getStart_date());
+        eventPost.setEnd_date(postUpdateDTO.getEnd_date());
+        postRepository.save(eventPost);
+    }
+    private void updatePollPost(PostUpdateDTO postUpdateDTO){
+
     }
 }

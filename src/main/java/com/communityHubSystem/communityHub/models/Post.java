@@ -32,7 +32,7 @@ public class Post implements Serializable {
     private PostType postType;
 
     public enum PostType{
-        EVENT,CONTENT;
+        EVENT,CONTENT,POLL,RESOURCE
     }
 
     @ManyToOne
