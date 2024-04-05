@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -33,6 +36,13 @@ public class UserController {
         System.err.println(userDTO);
         userDTO.isActive();
         return ResponseEntity.ok(userService.searchMethod(userDTO));
+    }
+
+    @PostMapping("/upload-data")
+    public ResponseEntity<?> uploadUsersData(@RequestParam("file") MultipartFile file) throws IOException {
+        this.userService.saveUserToDatabase(file);
+        return ResponseEntity
+                .ok(Map.of("Message" , " Employee data uploaded and saved to database successfully"));
     }
 
 

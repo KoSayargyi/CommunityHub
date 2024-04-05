@@ -28,7 +28,7 @@ public class ChatRoomController {
     @GetMapping("/room-list")
     public ResponseEntity<List<ChatRoom>> findAllChatRoom() {
         String staffId = SecurityContextHolder.getContext().getAuthentication().getName();
-        var user = userService.findByStaffId(staffId);
+        var user = userService.findByStaffId(staffId).orElse(null);
         List<User_ChatRoom> user_chatRooms = user_chatRoomService.findByUserId(user.getId());
         List<ChatRoom> chatRooms = new ArrayList<>();
         for (User_ChatRoom user_chatRoom : user_chatRooms) {

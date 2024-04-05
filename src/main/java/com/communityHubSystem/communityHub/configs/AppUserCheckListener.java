@@ -28,7 +28,7 @@ public class AppUserCheckListener {
         var time = LocalDateTime.ofInstant(new Date(event.getTimestamp()).toInstant(),
                 ZoneId.systemDefault());
         var staffId = event.getAuthentication().getName();
-        var user = userService.findByStaffId(staffId);
+        var user = userService.findByStaffId(staffId).orElseThrow();
         log.info("{} is sign in at {}", user.getEmail(), time);
         userAccessLogRepository.save(new UserAccessLog(user.getEmail(), UserAccessLog.LoginType.SIGN_IN, time));
     }
@@ -39,8 +39,8 @@ public class AppUserCheckListener {
         var time = LocalDateTime.ofInstant(new Date(event.getTimestamp()).toInstant(),
                 ZoneId.systemDefault());
         var staffId = event.getAuthentication().getName();
-        var user = userService.findByStaffId(staffId);
-        log.info("{} is fail to sign in at  because of {}", user.getEmail(), time, event.getException().getMessage());
+        var user = userService.findByStaffId(staffId).orElseThrow();
+        log.info("{} is fail to sign in at  because of {}", user.getStaffId(), time, event.getException().getMessage());
         userAccessLogRepository.save(new UserAccessLog(user.getEmail(), event.getException().getMessage(), UserAccessLog.LoginType.ERROR, time));
     }
 
@@ -51,7 +51,7 @@ public class AppUserCheckListener {
                 .ifPresent(auth -> {
                     var time = LocalDateTime.ofInstant(new Date(event.getTimestamp()).toInstant(), ZoneId.systemDefault());
                     var staffId = auth.getAuthentication().getName();
-                    var user = userService.findByStaffId(staffId);
+                    var user = userService.findByStaffId(staffId).orElseThrow();
                     log.info("{} is sign out at {}", user.getEmail(), time);
                     userAccessLogRepository.save(new UserAccessLog(user.getEmail(), UserAccessLog.LoginType.SIGN_OUT, time));
                 });

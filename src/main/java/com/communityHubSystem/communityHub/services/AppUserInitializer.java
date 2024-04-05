@@ -29,10 +29,11 @@ public class AppUserInitializer {
             user.setId(1L);
             user.setEmail("admin@gmail.com");
             user.setActive(true);
+            user.setName("Plugin");
             user.setRole(User.Role.ADMIN);
             user.setPassword(passwordEncoder.encode("admin"));
             user.setPhone("09978564121");
-            user.setStaffId("99-00001");
+            user.setStaffId("99-09999");
             userRepository.save(user);
         }
     }
