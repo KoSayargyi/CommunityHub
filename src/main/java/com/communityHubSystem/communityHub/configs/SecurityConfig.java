@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,6 +26,7 @@ public class SecurityConfig {
                 .usernameParameter("staff_id")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/"));
+        http.csrf(AbstractHttpConfigurer::disable);
         http.logout(log -> log
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/"));
@@ -33,7 +35,7 @@ public class SecurityConfig {
                 .requestMatchers("/css/**","/img/**","/js/**","/scss/**","/vendor/**").permitAll()
                 .requestMatchers("/user/**").hasAnyAuthority(User.Role.USER.name(), User.Role.ADMIN.name())
                 .requestMatchers("/admin/**").hasAnyAuthority(User.Role.ADMIN.name())
-                .anyRequest().authenticated());
+                .anyRequest().permitAll());
         http.exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
                 httpSecurityExceptionHandlingConfigurer.accessDeniedHandler((request, response, accessDeniedException) -> {
                     response.sendRedirect("/access-denied");

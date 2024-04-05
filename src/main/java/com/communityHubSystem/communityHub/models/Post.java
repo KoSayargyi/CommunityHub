@@ -1,5 +1,6 @@
 package com.communityHubSystem.communityHub.models;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class Post implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    @NotBlank(message = "created_date cannot be null!")
+    @Column(nullable = false)
     private Date created_date;
     private Date start_date;
     private Date end_date;
