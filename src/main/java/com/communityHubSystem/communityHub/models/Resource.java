@@ -25,8 +25,7 @@ public class Resource implements Serializable {
     private String photo;
     private String video;
     private Date date;
-    @Enumerated(EnumType.STRING)
-    private Type type;
+
 
     @ManyToOne
     @JoinColumn(name = "post_id")

@@ -23,7 +23,7 @@ public class PageController {
 
 
 
-    @GetMapping("/")
+    /*@GetMapping("/")
     public String homePage(HttpSession session){
         var auth = SecurityContextHolder.getContext().getAuthentication();
         String staffId = auth.getName();
@@ -39,7 +39,7 @@ public class PageController {
         }else{
             return "/layout/login";
         }
-    }
+    }*/
 
     @GetMapping("/index")
     public String indexPage(HttpSession session) {
