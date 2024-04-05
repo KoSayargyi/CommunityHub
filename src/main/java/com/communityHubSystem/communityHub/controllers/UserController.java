@@ -1,7 +1,6 @@
 package com.communityHubSystem.communityHub.controllers;
 
-import com.communityHubSystem.communityHub.DTO.TestDTO;
-import com.communityHubSystem.communityHub.DTO.UserDTO;
+import com.communityHubSystem.communityHub.dto.UserDTO;
 import com.communityHubSystem.communityHub.models.User;
 import com.communityHubSystem.communityHub.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
     @Autowired
     UserService userService;
 

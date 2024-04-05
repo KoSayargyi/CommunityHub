@@ -1,15 +1,15 @@
 package com.communityHubSystem.communityHub.impls;
 
-import com.communityHubSystem.communityHub.DTO.UserDTO;
+import com.communityHubSystem.communityHub.dto.UserDTO;
 import com.communityHubSystem.communityHub.models.*;
 import com.communityHubSystem.communityHub.repositories.UserRepository;
 import com.communityHubSystem.communityHub.services.UserService;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -17,10 +17,13 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     @Autowired
     UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Transactional
     @Override
     public void updateUserData(User user) {
     userRepository.findById(user.getId()).ifPresent(user1 -> {
@@ -90,6 +93,16 @@ public class UserServiceImpl implements UserService {
             userSpec = userSpec.and(s);
         }
         return userRepository.findAll(userSpec);
+    }
+
+    @Override
+    public User findByStaffId(String staffId) {
+        return userRepository.findByStaffId(staffId).orElseThrow();
+    }
+
+    @Override
+    public User findById(Long id) {
+      return userRepository.findById(id).orElseThrow();
     }
 
     public static Specification<User> getUserFromSkill(List<String > skillNameList){
