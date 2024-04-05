@@ -1,29 +1,28 @@
 package com.communityHubSystem.communityHub.configs;
 
 import com.communityHubSystem.communityHub.models.User;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
 @EnableWebSecurity
-@Slf4j
 public class SecurityConfig {
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("Configuring Spring Security filter chain");
         http.formLogin(login -> login
                 .loginPage("/signIn")
                 .usernameParameter("staff_id")
@@ -32,11 +31,9 @@ public class SecurityConfig {
         http.logout(log -> log
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/"));
-        http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/video", "/index","/signIn", "/ws/**", "/assets/**", "/forms/**","/static/**").permitAll()
-                .requestMatchers("/assets/**").permitAll()
-                .requestMatchers("/css/**","/img/**","/js/**","/scss/**","/vendor/**").permitAll()
+                .requestMatchers("/", "/signIn", "/ws/**", "/assets/**", "/forms/**", "/static/**").permitAll()
+                .requestMatchers("/css/**", "/img/**", "/js/**", "/scss/**", "/vendor/**").permitAll()
                 .requestMatchers("/user/**").hasAnyAuthority(User.Role.USER.name(), User.Role.ADMIN.name())
                 .requestMatchers("/admin/**").hasAnyAuthority(User.Role.ADMIN.name())
                 .anyRequest().authenticated());
@@ -45,5 +42,15 @@ public class SecurityConfig {
                     response.sendRedirect("/access-denied");
                 }));
         return http.build();
+    }
+
+    @Bean
+    AuthenticationEventPublisher authenticationEventPublisher() {
+        return new DefaultAuthenticationEventPublisher();
+    }
+
+    @Bean
+    HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 }
