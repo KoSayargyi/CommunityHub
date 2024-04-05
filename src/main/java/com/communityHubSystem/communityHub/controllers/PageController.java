@@ -45,7 +45,7 @@ public class PageController {
             // Handle case where user object is not found in session
             return "redirect:/login"; // Redirect to login page or handle as appropriate
         }
-        return "/layout/test";
+        return "index";
     }
     @GetMapping("/video")
     public String videoPage() {

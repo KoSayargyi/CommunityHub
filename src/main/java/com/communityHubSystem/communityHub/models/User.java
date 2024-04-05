@@ -42,7 +42,6 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
     private Set<User_Skill> user_skills;
 
-
     @OneToMany(mappedBy = "user",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
     private Set<User_Group> user_groups;
 
