@@ -35,7 +35,7 @@ public class PageController {
                                 .getAuthority()
                                 .equals(User.Role.USER.name()))){
             session.setAttribute("user", user.get()); // Store user object in session
-            return "redirect:/video";
+            return "redirect:/index";
         }else{
             return "/layout/login";
         }
@@ -49,7 +49,7 @@ public class PageController {
             // Handle case where user object is not found in session
             return "redirect:/login"; // Redirect to login page or handle as appropriate
         }
-        return "/layout/test";
+        return "index";
     }
     @GetMapping("/video")
     public String videoPage() {
