@@ -57,4 +57,11 @@ public class UserController {
     }
 
 
+    @PostMapping("/updateUserStatus")
+    @ResponseBody
+    public String updateUserStatus(@RequestParam Long userId, @RequestParam boolean isActive) {
+        userService.updateUserStatus(userId, isActive);
+        return "User status updated successfully";
+    }
+
 }

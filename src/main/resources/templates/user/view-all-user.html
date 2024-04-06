@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{index::head}">
     <meta charset="UTF-8">
     <title>Title</title>
@@ -7,42 +7,110 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css">
 
+
 </head>
 <body>
 <div th:replace="~{index::header}"></div>
 <div th:replace="~{index::navbar}"></div>
 <main id="main" class="main">
-    <div class="table-responsive" style="width:100%">
+    <div class="table-responsive" style="width:100%" sec:authorize="hasAnyAuthority('ADMIN')">
+
         <table id="usersTable" class="table table-striped table-bordered" style="width:100%">
             <thead>
             <tr>
                 <th>ID</th>
-                <th>Photo</th>
+                <th>Profile</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Division</th>
                 <th>Staff ID</th>
                 <th>Role</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="user : ${users}">
                 <td th:text="${user.id}"></td>
                 <td>
-                    <img th:if="${user.photo != null}" th:src="@{'/path/to/user/photos/' + ${user.photo}}" alt="User Photo" width="100" height="100"/>
-                    <img th:unless="${user.photo != null}" th:src="@{/assets/img/default-logo.png}" alt="Default Photo" width="100" height="100"/>
+                    <img th:if="${user.photo!= null}" th:src="@{'/path/to/user/photos/' + ${user.photo}}" alt="User Photo" style=" width: 50px;  height: 50px; border-radius: 50%;  object-fit: cover;"/>
+                    <img th:unless="${user.photo!= null}" th:src="@{/assets/img/default-logo.png}" alt="Default Photo" style=" width: 50px;  height: 50px; border-radius: 50%;  object-fit: cover;"/>
                 </td>
                 <td th:text="${user.name}"></td>
                 <td th:text="${user.email}"></td>
                 <td th:text="${user.division}"></td>
                 <td th:text="${user.staffId}"></td>
                 <td th:text="${user.role}"></td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:data-bs-target="'#userDetailModal-' + ${user.id}">View Detail</button>
+                    <button th:if="${user.isActive}" class="btn btn-danger btn-ban">Ban</button>
+                    <button th:unless="${user.isActive}" class="btn btn-success btn-unban">UnBan</button>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
-</main>
 
+    <div sec:authorize="hasAnyAuthority('USER')">
+        <link rel="stylesheet" href="/assets/css/userView.css">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+        <div class="container">
+            <div class="row">
+                <!-- Single Advisor-->
+                <div class="col-12 col-sm-6 col-lg-3" th:each="user : ${users}">
+                    <div class="single_advisor_profile wow fadeInUp" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
+                        <!-- Team Thumb-->
+                        <div class="advisor_thumb">
+                            <img th:if="${user.photo != null}" th:src="@{'/path/to/user/photos/' + ${user.photo}}" alt="User Photo" class="img-fluid rounded-circle">
+                            <img th:unless="${user.photo != null}" th:src="@{/assets/img/default-logo.png}" alt="Default Photo" class="img-fluid rounded-circle">
+                            <!-- Social Info-->
+                            <div class="social-info"><a href="#"><i class="fa fa-facebook"></i></a><a href="#"><i class="fa fa-twitter"></i></a><a href="#"><i class="fa fa-linkedin"></i></a></div>
+                        </div>
+                        <!-- Team Details-->
+                        <div class="single_advisor_details_info">
+                            <h6 th:text="${user.name}">Samantha Sarah</h6>
+                            <p class="designation">Founder &amp; CEO</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div th:each="user : ${users}" sec:authorize="hasAnyAuthority('ADMIN')">
+    <div class="modal fade" th:id="'userDetailModal-' + ${user.id}" tabindex="-1" aria-labelledby="userDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userDetailModalLabel">User Detail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="profile-image text-center">
+                                    <img th:if="${user.photo != null}" th:src="@{'/path/to/user/photos/' + ${user.photo}}" alt="User Photo" class="img-fluid rounded-circle">
+                                    <img th:unless="${user.photo != null}" th:src="@{/assets/img/default-logo.png}" alt="Default Photo" class="img-fluid rounded-circle">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <h4 class="modal-title"><strong th:text="${user.name}"></strong></h4>
+                                <p class="job_post" th:text="${user.role}"></p>
+                                <p th:text="${user.email}"></p>
+                                <p th:text="${user.division}"></p>
+                                <p th:text="${user.staffId}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" style="background-color: red">Ban</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div th:replace="~{index::footer}"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -69,7 +137,35 @@
 
         table.buttons().container()
             .appendTo( '#usersTable_wrapper .col-md-6:eq(0)' );
+
+        // Add click event listeners for ban and unban buttons
+        $('.btn-ban').on('click', function(event) {
+            event.preventDefault();
+            const userId = $(this).closest('tr').find('td:first').text();
+            updateUserStatus(userId, false);
+        });
+
+        $('.btn-unban').on('click', function(event) {
+            event.preventDefault();
+            const userId = $(this).closest('tr').find('td:first').text();
+            updateUserStatus(userId, true);
+        });
     });
+
+    function updateUserStatus(userId, isActive) {
+        $.ajax({
+            url: '/user/updateUserStatus',
+            method: 'POST',
+            data: { userId: userId, isActive: isActive },
+            success: function(response) {
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
+
 </script>
 
 </body>
