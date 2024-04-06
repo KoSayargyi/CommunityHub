@@ -1,4 +1,4 @@
-package com.communityHubSystem.communityHub.DTO;
+package com.communityHubSystem.communityHub.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,8 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PublicPostDTO {
+public class PostDTO {
     private String content;
-    private MultipartFile file;
-//    private MultipartFile[] files;
+    private String postType;
 }

@@ -1,5 +1,8 @@
 package com.communityHubSystem.communityHub.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,15 +30,20 @@ public class Resource implements Serializable {
     private Date date;
 
 
-    @ManyToOne
+
+    @JsonBackReference
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Post post;
+
 
     @OneToMany(mappedBy = "resource",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
     private Set<React> reacts;
 
+
     @OneToMany(mappedBy = "resource",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
     private Set<Comment> comments;
+
 
     @OneToMany(mappedBy = "resource",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
     private Set<Share> shares;

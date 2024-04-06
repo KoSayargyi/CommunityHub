@@ -12,13 +12,12 @@ import com.communityHubSystem.communityHub.repositories.ResourceRepository;
 import com.communityHubSystem.communityHub.services.PostService;
 import com.communityHubSystem.communityHub.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -48,41 +47,41 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post createPost(PostDTO postDTO) throws IOException {
-        var resource = postDTO.getFile();
+    public Post createPost(PostDTO postDTO,MultipartFile[] files,String[] captions) throws IOException {
+        var resources = files;
         var savedUrl = "";
         var staffId = SecurityContextHolder.getContext().getAuthentication().getName();
         var user =  userService.findByStaffId(staffId).orElseThrow(() -> new CommunityHubException("user not found"));
         var post = new Post();
 
         post.setPostType(checkPostType(postDTO));
-        post.setCreated_date(new Date());
+        post.setCreatedDate(new Date());
         post.setDescription(postDTO.getContent());
         post.setUser(user);
-
+//        post.setPostType(checkPostType(postDTO));
+        post.setPostType(Post.PostType.EVENT);
         var savedPost = postRepository.save(post);
-        var saveResource = new Resource();
-
-        saveResource.setPost(savedPost);
-
-        var extension =  resource.getOriginalFilename().substring(resource.getOriginalFilename().lastIndexOf('.')).toLowerCase();
-
-        if(isValidPhotoExtension(extension)){
-            savedUrl = uploadPhoto(resource);
-            saveResource.setPhoto(savedUrl);
-            saveResource.setDescription("PHOTO");
-        }else
-        if(isValidVideoExtension(extension)){
-            savedUrl = uploadVideo(resource);
-            saveResource.setVideo(savedUrl);
-            saveResource.setDescription("VIDEO");
-        }else {
-            savedUrl = null;
-        }
 
 
-        saveResource.setDate(new Date());
-        resourceRepository.save(saveResource);
+       for(int i = 0; i<resources.length; i++){
+           var resource = resources[i];
+           var extension =  resource.getOriginalFilename().substring(resource.getOriginalFilename().lastIndexOf('.')).toLowerCase();
+           var saveResource = new Resource();
+           saveResource.setPost(savedPost);
+           saveResource.setDescription(captions[i]);
+           if(isValidPhotoExtension(extension)){
+               savedUrl = uploadPhoto(resource);
+               saveResource.setPhoto(savedUrl);
+           }else
+           if(isValidVideoExtension(extension)){
+               savedUrl = uploadVideo(resource);
+               saveResource.setVideo(savedUrl);
+           }else {
+               savedUrl = null;
+           }
+           saveResource.setDate(new Date());
+           resourceRepository.save(saveResource);
+       }
         return savedPost;
     }
 
@@ -90,7 +89,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findAllPost() {
-        return postRepository.findAll();
+        return postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdDate"));
+//    return postRepository.findAllWithResources();
     }
 
     @Override
