@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -24,6 +25,13 @@ public class Community implements Serializable {
     private String name;
     private boolean isActive;
     private Date date;
+    private String ownerName;
+    private String description;
+    @Lob
+    @Column(name="image",columnDefinition = "LONGBLOB")
+    private byte[] image;
+    @Transient
+    private MultipartFile file;
 
     @OneToMany(mappedBy = "community",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
     private Set<User_Group> user_groups;

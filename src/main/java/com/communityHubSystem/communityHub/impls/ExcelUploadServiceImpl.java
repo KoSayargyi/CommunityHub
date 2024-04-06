@@ -27,7 +27,7 @@ public class ExcelUploadServiceImpl implements ExcelUploadService {
 
     @Override
     public boolean isValidExcelFile(MultipartFile file) {
-        return Objects.equals(file.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" );
+        return Objects.equals(file.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     }
 
     @Override
@@ -36,29 +36,45 @@ public class ExcelUploadServiceImpl implements ExcelUploadService {
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
             XSSFSheet sheet = workbook.getSheet("master");
-            int rowIndex =0;
-            for (Row row : sheet){
-                if (rowIndex ==0){
+            int rowIndex = 0;
+            for (Row row : sheet) {
+                if (rowIndex == 0) {
                     rowIndex++;
                     continue;
                 }
                 Iterator<Cell> cellIterator = row.iterator();
                 int cellIndex = 0;
                 User user = new User();
-                while (cellIterator.hasNext()){
+                while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
-                    switch (cellIndex){
-                        case 0 : user.setId((long) cell.getNumericCellValue());
-                        case 1 : user.setDivision(cell.getStringCellValue());
-                        case 2 : user.setStaffId(cell.getStringCellValue());
-                        case 3 : user.setName(cell.getStringCellValue());
-                        case 4 : user.setDoorLogNum((long) cell.getNumericCellValue());
-                        case 5 : user.setDept(cell.getStringCellValue());
-                        case 6 : user.setTeam(cell.getStringCellValue());
-                        case 7 : user.setEmail(cell.getStringCellValue());
+                    switch (cellIndex) {
+                        case 0:
+                            user.setId((long) cell.getNumericCellValue());
+                            break;
+                        case 1:
+                            user.setDivision(cell.getStringCellValue());
+                            break;
+                        case 2:
+                            user.setStaffId(cell.getStringCellValue());
+                            break;
+                        case 3:
+                            user.setName(cell.getStringCellValue());
+                            break;
+                        case 4:
+                            user.setDoorLogNum((long) cell.getNumericCellValue());
+                            break;
+                        case 5:
+                            user.setDept(cell.getStringCellValue());
+                            break;
+                        case 6:
+                            user.setTeam(cell.getStringCellValue());
+                            break;
+                        case 7:
+                            user.setEmail(cell.getStringCellValue());
+                            break;
 
 
-                        default : {
+                        default: {
                         }
                     }
                     cellIndex++;
