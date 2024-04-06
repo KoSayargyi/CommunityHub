@@ -26,7 +26,7 @@ public class AppUserInitializer {
     public void initializeAppUser(){
         if(userRepository.count() == 0){
             var user = new User();
-            user.setId(1L);
+            user.setId(999L);
             user.setEmail("admin@gmail.com");
             user.setActive(true);
             user.setName("Plugin");
