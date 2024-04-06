@@ -113,6 +113,20 @@ public class UserServiceImpl implements UserService {
       return userRepository.findById(id).orElseThrow();
     }
 
+    @Override
+    public List<User> getAllUserWithoutAdmin() {
+        Specification<User> spec = (root, query, builder) -> builder.equal(root.get("role"), User.Role.USER);
+        return userRepository.findAll(spec);
+    }
+
+    @Override
+    public void updateUserStatus(Long userId, boolean isActive) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        user.setActive(isActive);
+        userRepository.save(user);
+    }
+
     public static Specification<User> getUserFromSkill(List<String > skillNameList){
         return (root, query, criteriaBuilder) -> {
             if(!skillNameList.isEmpty()){
