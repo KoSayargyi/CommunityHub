@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:fragment="head">
     <meta charset="utf-8">
@@ -63,7 +63,7 @@
                 </a>
             </li><!-- End Search Icon-->
             <li class="nav-item dropdown">
-                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown"  sec:authorize="hasAnyAuthority('ADMIN')">
                     <i class="bi bi-file-earmark-spreadsheet"></i>
                 </a><!-- End Excel Icon -->
 
@@ -202,7 +202,7 @@
                     <li>
                         <a class="dropdown-item d-flex align-items-center" href="/user/profile">
                             <i class="bi bi-gear"></i>
-                            <span>Account Settings</span>
+                            <span>Change Password</span>
                         </a>
                     </li>
                     <li>
@@ -248,13 +248,13 @@
             </a>
         </li><!-- End Dashboard Nav -->
 
-        <li class="nav-item">
+        <li  class="nav-item" sec:authorize="hasAnyAuthority('ADMIN')">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-menu-button-wide"></i><span>Data</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 <li>
-                    <a href="components-alerts.html">
+                    <a href="/user/View-all-users">
                         <i class="bi bi-circle"></i><span>Employee</span>
                     </a>
                 </li>
