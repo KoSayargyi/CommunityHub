@@ -14,4 +14,6 @@ public interface UserService {
     public List<User> searchMethod(UserDTO userDTO);
     Optional<User> findByStaffId(String staffId);
     public User findById(Long id);
+    public List<User> getAllUserWithoutAdmin();
+    void updateUserStatus(Long userId, boolean isActive);
 }
