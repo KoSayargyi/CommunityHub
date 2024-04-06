@@ -1,5 +1,6 @@
 package com.communityHubSystem.communityHub.models;
 
+import com.communityHubSystem.communityHub.repositories.ResourceRepository;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -19,6 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class Post implements Serializable {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +51,5 @@ public class Post implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_group_id")
     private User_Group user_group;
-
 
 }
