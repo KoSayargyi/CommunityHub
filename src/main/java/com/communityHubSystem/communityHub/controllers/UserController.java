@@ -2,11 +2,16 @@ package com.communityHubSystem.communityHub.controllers;
 
 import com.communityHubSystem.communityHub.dto.UserDTO;
 import com.communityHubSystem.communityHub.models.User;
+import com.communityHubSystem.communityHub.repositories.UserRepository;
+import com.communityHubSystem.communityHub.services.PostService;
 import com.communityHubSystem.communityHub.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.Banner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,17 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    UserService userService;
-    @GetMapping("/home")
-    public String goToHome(){
-        return "/user/home";
-    }
-
-
+    private final UserService userService;
+    private final PostService postService;
+    private final UserRepository userRepository;
 
     @GetMapping("/allUser")
     @ResponseBody
@@ -48,6 +49,16 @@ public class UserController {
         return ResponseEntity.ok(userService.searchMethod(userDTO));
     }
 
+    @GetMapping("/profile")
+    public String profilePage(Model model){
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        String staffId = auth.getName();
+        var user = userService.findByStaffId(staffId).orElseThrow();
+        System.out.println(user);
+        System.out.println(user.getPosts().size());
+        model.addAttribute("user", user);
+        return "/user/user-profile";
+    }
     @PostMapping("/upload-data")
     @ResponseBody
     public ResponseEntity<?> uploadUsersData(@RequestParam("file") MultipartFile file) throws IOException {
@@ -56,6 +67,12 @@ public class UserController {
                 .ok(Map.of("Message" , " Employee data uploaded and saved to database successfully"));
     }
 
+    @GetMapping("/View-all-users")
+    public String viewUser(Model model){
+        List<User> users = userRepository.findAll();
+        model.addAttribute("users", users);
+        return "/user/view-all-user";
+    }
 
     @PostMapping("/updateUserStatus")
     @ResponseBody
