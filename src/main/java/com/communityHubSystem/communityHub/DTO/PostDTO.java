@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class PostDTO {
     private String content;
-    private String postType;
+    private String groupId;
 }
