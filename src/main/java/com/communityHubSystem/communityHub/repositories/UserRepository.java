@@ -10,7 +10,7 @@ public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificati
 
     Optional<User> findByStaffId(String staffId);
 
-
+    boolean existsByStaffId(String staffId);
 
 
 }
