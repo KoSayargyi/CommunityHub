@@ -30,22 +30,9 @@ public class Resource implements Serializable {
     private Date date;
 
 
-
     @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Post post;
-
-
-    @OneToMany(mappedBy = "resource",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
-    private Set<React> reacts;
-
-
-    @OneToMany(mappedBy = "resource",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
-    private Set<Comment> comments;
-
-
-    @OneToMany(mappedBy = "resource",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
-    private Set<Share> shares;
 
 }

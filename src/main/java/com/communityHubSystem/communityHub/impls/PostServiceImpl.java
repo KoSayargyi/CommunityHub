@@ -3,8 +3,10 @@ package com.communityHubSystem.communityHub.impls;
 import com.cloudinary.Cloudinary;
 import com.communityHubSystem.communityHub.dto.PostDTO;
 import com.communityHubSystem.communityHub.exception.CommunityHubException;
+import com.communityHubSystem.communityHub.models.Access;
 import com.communityHubSystem.communityHub.models.Post;
 import com.communityHubSystem.communityHub.models.Resource;
+import com.communityHubSystem.communityHub.models.User;
 import com.communityHubSystem.communityHub.repositories.PollRepository;
 import com.communityHubSystem.communityHub.repositories.PostRepository;
 import com.communityHubSystem.communityHub.repositories.ResourceRepository;
@@ -33,6 +35,82 @@ public class PostServiceImpl implements PostService {
     private final List<String> videoExtensions = Arrays.asList(".mp4", ".avi", ".mov", ".wmv" ,"mkv" ,"flv","mpeg","mpg","webm","3gp","ts");
 
 
+
+
+    @Override
+    public Post createPost(PostDTO postDTO,MultipartFile[] files,String[] captions) throws IOException {
+        if(files.length > 0){
+            return createResource(postDTO,files,captions);
+        }else{
+           return createCaption(postDTO);
+        }
+
+    }
+
+
+
+    @Override
+    public List<Post> findAllPost() {
+        return postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdDate"));
+    }
+
+
+
+    private boolean isValidPhotoExtension(String extension) {
+        return photoExtensions.contains(extension);
+    }
+
+    private boolean isValidVideoExtension(String extension) {
+        return videoExtensions.contains(extension);
+    }
+
+
+
+    private Post createResource(PostDTO postDTO,MultipartFile[] files,String[] captions) throws IOException {
+        var savedPost = createCaption(postDTO);
+        for(int i = 0 ;i <files.length; i++){
+            var cap = "";
+            if(captions != null && i < captions.length){
+                cap = captions[i]+"";
+            }
+            var resource = new Resource();
+            savedPost.setPostType(Post.PostType.RESOURCE);
+            resource.setPost(savedPost);
+            resource.setDescription(cap);
+            resource.setDate(new Date());
+            if(isValidVideoExtension(getFileExtension(files[i]))){
+                resource.setVideo(uploadVideo(files[i]));
+            }
+            if(isValidPhotoExtension(getFileExtension(files[i]))) {
+                resource.setPhoto(uploadPhoto(files[i]));
+            }
+            resourceRepository.save(resource);
+        }
+        return  savedPost;
+    }
+
+    private Post createCaption(PostDTO postDTO){
+        var post = new Post();
+        post.setDescription(postDTO.getContent());
+        post.setPostType(Post.PostType.CONTENT);
+        post.setCreatedDate(new Date());
+        post.setUser(getCurrentLoginUser());
+        if(postDTO.getGroupId()!=null){
+            post.setAccess(Access.PRIVATE);
+        }else{
+            post.setAccess(Access.PUBLIC);
+        }
+        return postRepository.save(post);
+    }
+
+    private User getCurrentLoginUser(){
+        return userService.findByStaffId(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new CommunityHubException("user not found"));
+    }
+
+    private String getFileExtension(MultipartFile file){
+        return file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.')).toLowerCase();
+    }
+
     public String uploadVideo(MultipartFile file) throws IOException {
         return cloudinary.uploader()
                 .upload(file.getBytes(), Map.of("resource_type", "video","public_id", UUID.randomUUID().toString()))
@@ -44,123 +122,4 @@ public class PostServiceImpl implements PostService {
                 .upload(file.getBytes(), Map.of( "public_id", UUID.randomUUID().toString()))
                 .get("url").toString();
     }
-
-    @Override
-    public Post createPost(PostDTO postDTO,MultipartFile[] files,String[] captions) throws IOException {
-        var resources = files;
-        var savedUrl = "";
-        var staffId = SecurityContextHolder.getContext().getAuthentication().getName();
-        var user =  userService.findByStaffId(staffId).orElseThrow(() -> new CommunityHubException("user not found"));
-        var post = new Post();
-
-        post.setPostType(checkPostType(postDTO));
-        post.setCreatedDate(new Date());
-        post.setDescription(postDTO.getContent());
-        post.setUser(user);
-//        post.setPostType(checkPostType(postDTO));
-        post.setPostType(Post.PostType.EVENT);
-        var savedPost = postRepository.save(post);
-
-
-        for(int i = 0; i<resources.length; i++){
-            var resource = resources[i];
-            var extension =  resource.getOriginalFilename().substring(resource.getOriginalFilename().lastIndexOf('.')).toLowerCase();
-            var saveResource = new Resource();
-            saveResource.setPost(savedPost);
-            saveResource.setDescription(captions[i]);
-            if(isValidPhotoExtension(extension)){
-                savedUrl = uploadPhoto(resource);
-                saveResource.setPhoto(savedUrl);
-            }else
-            if(isValidVideoExtension(extension)){
-                savedUrl = uploadVideo(resource);
-                saveResource.setVideo(savedUrl);
-            }else {
-                savedUrl = null;
-            }
-            saveResource.setDate(new Date());
-            resourceRepository.save(saveResource);
-        }
-        return savedPost;
-    }
-
-
-
-    @Override
-    public List<Post> findAllPost() {
-        return postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdDate"));
-//    return postRepository.findAllWithResources();
-    }
-
-//    @Override
-//    public Post updatePost(PostUpdateDTO postUpdateDTO) {
-//
-//        return null;
-//    }
-
-
-//    @Override
-//    public Post deletePost(Long id) {
-//        return null;
-//    }
-
-    private boolean isValidPhotoExtension(String extension) {
-        return photoExtensions.contains(extension);
-    }
-
-    private boolean isValidVideoExtension(String extension) {
-        return videoExtensions.contains(extension);
-    }
-
-    private Post.PostType checkPostType(PostDTO postDTO){
-        switch (postDTO.getPostType()){
-            case "CONTENT" -> {
-                return Post.PostType.CONTENT;
-            }
-            case "RESOURCE" -> {
-                return Post.PostType.RESOURCE;
-            }
-            case "EVENT" -> {
-                return Post.PostType.EVENT;
-            }
-            case "POLL" -> {
-                return Post.PostType.POLL;
-            }
-            default -> {
-                return null;
-            }
-        }
-    }
-
-//    private void updateContentPost(PostUpdateDTO postUpdateDTO){
-//        var contentPost = postRepository.findById(postUpdateDTO.getPostId()).orElseThrow(()->new CommunityHubException("post not found"));
-//        contentPost.setDescription(postUpdateDTO.getDescription());
-//        postRepository.save(contentPost);
-//    }
-//    private void updateResourcePost(PostUpdateDTO postUpdateDTO){
-//        var resource = postUpdateDTO.getResources();
-//        var post = postRepository.findById(postUpdateDTO.getPostId()).orElseThrow(()->new CommunityHubException("post not found"));
-//        for(var r : resource){
-//            var updateResource = resourceRepository.findById(r.getId()).orElseThrow(()->new CommunityHubException("resource not found"));
-//            updateResource.setDate(new Date());
-//            updateResource.setPost(post);
-//            updateResource.setPhoto(r.getPhoto());
-//            updateResource.setVideo(r.getVideo());
-//            updateResource.setReacts(r.getReacts());
-//            updateResource.setDescription(r.getDescription());
-//            updateResource.setShares(r.getShares());
-//            updateResource.setComments(r.getComments());
-//            resourceRepository.save(updateResource);
-//        }
-//    }
-//    private void updateEventPost(PostUpdateDTO postUpdateDTO){
-//        var eventPost = postRepository.findById(postUpdateDTO.getPostId()).orElseThrow(()->new CommunityHubException("post not found"));
-//        eventPost.setDescription(postUpdateDTO.getDescription());
-//        eventPost.setStart_date(postUpdateDTO.getStart_date());
-//        eventPost.setEnd_date(postUpdateDTO.getEnd_date());
-//        postRepository.save(eventPost);
-//    }
-//    private void updatePollPost(PostUpdateDTO postUpdateDTO){
-//
-//    }
 }

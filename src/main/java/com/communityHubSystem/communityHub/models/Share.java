@@ -24,6 +24,10 @@ public class Share implements Serializable {
     private Date date;
 
     @ManyToOne
-    @JoinColumn(name = "resource_id")
-    private Resource resource;
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    private User user;
 }

@@ -28,29 +28,39 @@ public class Post implements Serializable {
     private String description;
     @Column(nullable = false)
     private Date createdDate;
-    private Date start_date;
-    private Date end_date;
     @Enumerated(EnumType.STRING)
     private PostType postType;
+    @Enumerated(EnumType.STRING)
+    private Access access;
 
     public enum PostType{
         EVENT,CONTENT,POLL,RESOURCE
     }
 
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
-    private Set<Poll> polls;
-
-
     @JsonManagedReference
-    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Resource> resources;
 
     @ManyToOne
     @JoinColumn(name = "user_group_id")
     private User_Group user_group;
+
+
+    @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
+    private Set<React> reacts;
+
+
+    @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
+    private Set<Comment> comments;
+
+
+    @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
+    private Set<Share> shares;
+
 
 }

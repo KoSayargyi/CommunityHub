@@ -98,7 +98,7 @@ async function createPost(){
     }
     data.append('captions', captions);
     console.log(data) 
-    console.log(Object.fromEntries(data.entries()))
+    console.log(Object.fromEntries(data.entries())) 
     let response = await fetch('/post/createPublicPost',{
         method : 'POST',
         body : data
@@ -113,75 +113,86 @@ async function welcome(){
     method : 'GET'
     })
     let response = await data.json()
+    console.log(response)
  
-    
-    let div = ''
+    let posts = ''
     if(response.length === 0){
       newsfeed.innerHTML = `<div>No Posts Available</div>`
     }else{
       response.forEach(p=>{
-        let posts = ''
-      posts += `
+       
+        let post = ''
+       post += `
 
-        <div class="post">
-        <div class="post-top">
-            <div class="dp">
-                <img src="/static/assets/img/card.jpg" alt="">
-            </div>
-            <div class="post-info">
-                <p class="name">Sandi</p>
-                <span class="time">12 hrs ago</span>
-            </div>
-            <i class="fas fa-ellipsis-h "></i>
-        </div>
-        <div class="post-content">
-            ${p.description}
-             <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">`
+      <div class="post">
+      <div class="post-top">
+          <div class="dp">
+              <img src="${p.user.photo}" alt="">
+          </div>
+          <div class="post-info">
+              <p class="name">${p.user.name}</p>
+              <span class="time">2 days ago</span>
+          </div>
+          <i class="fas fa-ellipsis-h "></i>
+      </div>
+      <div class=" post-content">
+          ${p.description}
+          <div id="${p.id}" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">`
 
-            p.resources.forEach(r=>{
-              posts +=`
-              
-           
-              <div class="carousel-item active">
-                <img src="${r.photo}" class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="${r.video}" class="d-block w-100" alt="...">
-              </div> 
-              
-              `
-            })
-            
-            posts += `</div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button></div>
-            </div>
-            <div class="post-bottom">
-                <div class="action">
-                    <i class="fa-regular fa-thumbs-up"></i>
-                    <span>Like</span>
-                </div>
-                <div class="action">
-                    <i class="fa-regular fa-comment"></i>
-                    <span>Comment</span>
-                </div>
-                <div class="action">
-                    <i class="fa fa-share"></i>
-                    <span>Share</span>
-                </div>
-            </div>
-        </div>`
 
-        div += posts
+                p.resources.forEach((r,index)=>{
+                  let active = index == 0 ? 'active' : ''
+                  if(r.photo === null && r.video !== null){
+                    post += `<div class="carousel-item ${active}">
+                    <video controls src="${r.video}" class="d-block w-100" alt="..."></video>
+                  </div>`
+                  }else
+                  if(r.video === null && r.photo !== null){
+                    post += `<div class="carousel-item ${active}">
+                    <img src="${r.photo}" class="d-block w-100" alt="...">
+                  </div>`
+                  }else{
+                    post += `<div class="carousel-item ${active}">
+                    <video controls src="${r.video}" class="d-block w-100" alt="..."></video>
+                  </div>`
+                  post += `<div class="carousel-item ${active}">
+                  <img src="${r.photo}" class="d-block w-100" alt="...">
+                </div>`
+                  }
+                 
+                })
+                
+              post+= `</div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#${p.id}" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#${p.id}" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+      </div>
+      <div class="post-bottom">
+          <div class="action">
+              <i class="fa-regular fa-thumbs-up"></i>
+              <span>Like</span>
+          </div>
+          <div class="action">
+              <i class="fa-regular fa-comment"></i>
+              <span>Comment</span>
+          </div>
+          <div class="action">
+              <i class="fa fa-share"></i>
+              <span>Share</span>
+          </div>
+      </div>
+  </div>`
+
+        posts += post
       })
-      newsfeed.innerHTML = div
+      newsfeed.innerHTML = posts
     }
     // console.log(data.json())
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -25,9 +26,13 @@ public class Comment implements Serializable {
     private LocalDateTime localDateTime;
 
     @ManyToOne
-    @JoinColumn(name = "resource_id")
-    private Resource resource;
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @OneToMany(mappedBy = "comment",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
     private Set<Reply> replies;
+
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    private User user;
 }
