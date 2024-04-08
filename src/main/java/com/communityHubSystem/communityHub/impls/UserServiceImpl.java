@@ -127,6 +127,11 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public boolean existsByStaffId(String staffId) {
+        return userRepository.existsByStaffId(staffId);
+    }
+
     public static Specification<User> getUserFromSkill(List<String > skillNameList){
         return (root, query, criteriaBuilder) -> {
             if(!skillNameList.isEmpty()){

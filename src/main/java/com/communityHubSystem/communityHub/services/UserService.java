@@ -16,4 +16,5 @@ public interface UserService {
     public User findById(Long id);
     public List<User> getAllUserWithoutAdmin();
     void updateUserStatus(Long userId, boolean isActive);
+    boolean existsByStaffId(String staffId);
 }

@@ -23,6 +23,6 @@ public class Skill implements Serializable {
     private String name;
     private String experience;
 
-    @OneToMany(mappedBy = "skill",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "skill",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.EAGER)
     private Set<User_Skill> user_skills;
 }
