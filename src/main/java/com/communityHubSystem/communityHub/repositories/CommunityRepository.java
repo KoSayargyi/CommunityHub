@@ -1,11 +1,11 @@
 package com.communityHubSystem.communityHub.repositories;
 
 import com.communityHubSystem.communityHub.models.Community;
+import com.communityHubSystem.communityHub.models.User_Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface CommunityRepository extends JpaRepository<Community,Long> {
+import java.util.List;
 
-    @Query("SELECT c.image FROM Community c WHERE c.id = :id")
-    byte[] originalPhoto(Long id);
+public interface CommunityRepository extends JpaRepository<Community,Long> {
 }

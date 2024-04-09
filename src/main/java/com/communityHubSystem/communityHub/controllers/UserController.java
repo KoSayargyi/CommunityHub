@@ -3,10 +3,8 @@ package com.communityHubSystem.communityHub.controllers;
 import com.communityHubSystem.communityHub.dto.UserDTO;
 import com.communityHubSystem.communityHub.models.User;
 import com.communityHubSystem.communityHub.repositories.UserRepository;
-import com.communityHubSystem.communityHub.services.PostService;
 import com.communityHubSystem.communityHub.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.Banner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +23,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final PostService postService;
     private final UserRepository userRepository;
 
     @GetMapping("/allUser")

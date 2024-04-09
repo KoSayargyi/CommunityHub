@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,10 @@ public class Community implements Serializable {
     @Transient
     private MultipartFile file;
 
-    @OneToMany(mappedBy = "community",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
+    @Transient
+    private ArrayList<Long> user;
+
+    @OneToMany(mappedBy = "community",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private List<User_Group> user_groups;
 }
