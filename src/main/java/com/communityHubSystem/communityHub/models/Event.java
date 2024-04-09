@@ -33,6 +33,10 @@ public class Event {
     @OneToMany(mappedBy = "event",cascade = CascadeType.ALL)
     private List<Poll> polls;
 
+    @ManyToOne
+    @JoinColumn(name = "user_group_id")
+    private User_Group user_group;
+
     public enum EventType{
         EVENT,VOTE
     }

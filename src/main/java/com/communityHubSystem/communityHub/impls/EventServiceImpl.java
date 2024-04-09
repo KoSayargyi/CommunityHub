@@ -2,9 +2,7 @@ package com.communityHubSystem.communityHub.impls;
 
 import com.communityHubSystem.communityHub.dto.EventDTO;
 import com.communityHubSystem.communityHub.exception.CommunityHubException;
-import com.communityHubSystem.communityHub.models.Access;
-import com.communityHubSystem.communityHub.models.Event;
-import com.communityHubSystem.communityHub.models.User;
+import com.communityHubSystem.communityHub.models.*;
 import com.communityHubSystem.communityHub.repositories.EventRepository;
 import com.communityHubSystem.communityHub.repositories.PollRepository;
 import com.communityHubSystem.communityHub.repositories.UserRepository;
@@ -13,7 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +22,9 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final PollRepository pollRepository;
     private final UserRepository userRepository;
-
+    SimpleDateFormat formatter =new SimpleDateFormat("yyyy-MM-dd");
     @Override
-    public Event createEvent(EventDTO eventDTO) {
+    public Event createEvent(EventDTO eventDTO) throws ParseException {
         if(eventDTO.getEventType().equals("EVENT")){
             return createEventPost(eventDTO);
         }else{
@@ -31,19 +32,34 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private Event createEventPost(EventDTO eventDTO){
+    @Override
+    public List<Event> getAllEvents() {
+        return eventRepository.findByEventType(Event.EventType.EVENT);
+    }
+
+
+    private Event createEventPost(EventDTO eventDTO) throws ParseException {
         var event = new Event();
         event.setEventType(Event.EventType.EVENT);
         event.setAccess(checkAccess(eventDTO));
         event.setCreated_date(new Date());
         event.setDescription(eventDTO.getDescription());
-        event.setStart_date(eventDTO.getStart_date());
-        event.setEnd_date(eventDTO.getEnd_date());
+        event.setStart_date(formatter.parse(eventDTO.getStart_date()));
+        event.setEnd_date(formatter.parse(eventDTO.getEnd_date()));
         event.setUser(getLoginUser());
         return eventRepository.save(event);
     }
 
-    private Event createPollPost(EventDTO eventDTO){
+    private Event createPollPost(EventDTO eventDTO) throws ParseException {
+        var event = new Event();
+        event.setEventType(Event.EventType.VOTE);
+        event.setUser(getLoginUser());
+        event.setDescription(eventDTO.getDescription());
+        event.setStart_date(formatter.parse(eventDTO.getStart_date()));
+        event.setEnd_date(formatter.parse(eventDTO.getEnd_date()));
+        event.setCreated_date(new Date());
+        event.setAccess(checkAccess(eventDTO));
+        event.set
         return null;
     }
 

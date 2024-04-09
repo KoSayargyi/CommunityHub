@@ -11,8 +11,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventDTO {
-    private Date start_date;
-    private Date end_date;
+    private String start_date;
+    private String  end_date;
     private String description;
     private String eventType;
     private MultipartFile multipartFile;

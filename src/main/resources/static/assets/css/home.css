@@ -17,6 +17,10 @@ nav .nav-middle a.active{
     position: relative;
 
 }
+#calendar {
+    width: 800px;
+    height: 600px;
+  }
 nav .nav-middle a.active::after{
     content: '';
     width: 100%;

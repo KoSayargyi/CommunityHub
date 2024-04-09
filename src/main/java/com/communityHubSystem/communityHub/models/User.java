@@ -57,6 +57,7 @@ public class User implements Serializable {
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Event> events;
 
 

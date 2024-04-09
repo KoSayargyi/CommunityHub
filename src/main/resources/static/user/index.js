@@ -196,3 +196,29 @@ async function welcome(){
     }
     // console.log(data.json())
 }
+
+async function createEventPost(event) {
+  var startDate = new Date(document.getElementById('start_date').value);
+  var endDate = new Date(document.getElementById('end_date').value);
+
+  if (startDate > endDate) {
+    alert('Start date must be earlier than end date.');
+    event.preventDefault();
+  } else {
+    event.preventDefault(); // prevent the form from being submitted immediately
+    let data = new FormData(document.getElementById('eventForm'));
+    console.log(data);
+    let response = await fetch('/event/createEvent', {
+      method: 'POST',
+      body: data
+    });
+    let result = await response.json();
+    console.log(result);
+  }
+}
+
+document.getElementById('eventForm').addEventListener('submit', function(event) {
+  createEventPost(event);
+  document.getElementById('eventForm').reset()
+});
+
