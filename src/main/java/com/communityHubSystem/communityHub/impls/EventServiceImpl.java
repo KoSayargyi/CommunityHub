@@ -51,15 +51,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private Event createPollPost(EventDTO eventDTO) throws ParseException {
-        var event = new Event();
-        event.setEventType(Event.EventType.VOTE);
-        event.setUser(getLoginUser());
-        event.setDescription(eventDTO.getDescription());
-        event.setStart_date(formatter.parse(eventDTO.getStart_date()));
-        event.setEnd_date(formatter.parse(eventDTO.getEnd_date()));
-        event.setCreated_date(new Date());
-        event.setAccess(checkAccess(eventDTO));
-        event.set
+
         return null;
     }
 
