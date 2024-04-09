@@ -9,6 +9,7 @@
     <meta content="" name="description">
     <meta content="" name="keywords">
 
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <!-- Favicons -->
     <link href="/static/assets/img/team-logo.png" rel="icon">
     <link href="/static/assets/img/team-logo.png" rel="apple-touch-icon">
@@ -29,6 +30,12 @@
     <!-- Template Main CSS File -->
     <link href="/static/assets/css/home.css" rel="stylesheet">
     <link href="/static/assets/css/style.css" rel="stylesheet">
+    <style>
+        #calendar {
+  width: 800px;
+  height: 600px;
+}
+    </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -259,7 +266,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/api/community/group">
+                    <a href="components-accordion.html">
                         <i class="bi bi-circle"></i><span>Group</span>
                     </a>
                 </li>
@@ -428,7 +435,156 @@
                 <span class="name">Aye Aye</span>
             </div>
         </div>
+ 
+        <nav style="--bs-breadcrumb-divider: '>';">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">
+            <i class="bx bxl-facebook-square"></i>
+                    What's on your mind ?
+          </button>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventCreateModal">
+            Create a event
+          </button>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick="seeEvents()" data-bs-target="#calendar">
+           See calender
+          </button>
+          
+        </nav>
+          <div class="modal fade" id="modalDialogScrollable" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Create Status</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body"> 
+                        <form id="postForm">
+                            <!-- Quill Editor Default -->
+        
+                            <div class="row mb-3">
+                                <label for="inputPassword" class="col-sm-2 col-form-label ">Title</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control quill-editor-default" style="height: 100px" name="content" id="content"></textarea>
+                                </div>
+                            </div>
+        
+                            <div class="row mb-3">
+                                <label for="formFile" class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <label for="formFile" style="width: 50px; height: 50px;">
+                                        Select Photo/Video
+                                    </label>
+                                    <input class="form-control"   type="file" id="file" name="file" multiple>
+                                </div>
+                            </div>
+        
+        
+        
+                
+         
 
+                            <div></div>
+        
+        
+                            <!-- <div class="row mb-3">
+                              <label class="col-sm-2 col-form-label">Select</label>
+                              <div class="col-sm-10">
+                                <select class="form-select" aria-label="Default select example">
+                                  <option selected>Open this select menu</option>
+                                  <option value="1">One</option>
+                                  <option value="2">Two</option>
+                                  <option value="3">Three</option>
+                                </select>
+                              </div>
+                            </div> -->
+                            <!--
+                                                    <div class="row mb-3">
+                                                      <label class="col-sm-2 col-form-label">Multi Select</label>
+                                                      <div class="col-sm-10">
+                                                        <select class="form-select" multiple aria-label="multiple select example">
+                                                          <option selected>Open this select menu</option>
+                                                          <option value="1">One</option>
+                                                          <option value="2">Two</option>
+                                                          <option value="3">Three</option>
+                                                        </select>
+                                                      </div>
+                                                    </div> -->
+        
+                            <!-- <div class="row mb-3">
+                              <label class="col-sm-2 col-form-label">Submit Button</label>
+                              <div class="col-sm-10">
+                                <button type="submit" class="btn btn-primary">Submit Form</button>
+                              </div>
+                            </div> -->
+
+                            <div id="preview"></div>
+        
+                        </form><!-- End General Form Elements -->
+                        <!-- End Quill Editor Default -->
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="createPost()">POST</button> 
+                    </div>
+                  </div>
+                </div>
+              </div><!-- End Modal Dialog Scrollable-->
+        
+
+  <!-- Button trigger modal -->
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="eventCreateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+         <form id="eventForm">
+            <label for="description">Enter Event Title</label>
+            <input type="text" class="form-control" name="description" id="eventDescription">
+            <label for="start_date">Enter start date</label>
+            <input type="date" class="form-control" name="start_date" id="start_date">
+            <label for="end_date">Enter end date</label>
+            <input type="date" class="form-control" name="end_date" id="end_date">
+            <input type="text" name="eventType" id="eventType" value="EVENT" hidden>
+            <label for="multipartFile">Enter Event Photo</label>
+            <input type="file" name="multipartFile" class="form-control" id="multipartFile" >
+         
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"  >POST</button> 
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button trigger modal -->
+
+  <!-- Modal -->
+  <div class="modal fade" id="calendar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body"> 
+            <div id="calendar"></div> 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+        </div>
+      </div>
+    </div>
+  </div>
+              
+
+     
         <div class="post create">
             <div class="post-top">
                 <div class="dp">
@@ -451,26 +607,22 @@
                 </div>
             </div>
         </div>
-        <div class="post" th:each="post : ${posts}">
+        <div id="newsfeed">
+        <div class="post">
             <div class="post-top">
                 <div class="dp">
-                    <img th:src="@{/static/assets/img/card.jpg}" alt="">
+                    <img src="/static/assets/img/card.jpg" alt="">
                 </div>
                 <div class="post-info">
                     <p class="name">Sandi</p>
-                    <span class="time" >2 hours</span>
+                    <span class="time">12 hrs ago</span>
                 </div>
                 <i class="fas fa-ellipsis-h "></i>
             </div>
-            <div class="post-content" th:text="${post.description}">
-                <div th:each="resource : ${post.resources}">
-                    <img th:if="${resource.photo != null}" th:src="@{${resource.photo}}" alt="Resource Photo">
-                    <video th:if="${resource.video != null}" width="320" height="240" controls>
-                        <source th:src="@{${resource.video}}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <p th:if="${resource.description != null}" th:text="${resource.description}"></p>
-                </div>
+            <div class="post-content">
+                Roses are red<br>
+                Violets are blue<br>
+                I'm ugly & you are too
             </div>
             <div class="post-bottom">
                 <div class="action">
@@ -488,8 +640,57 @@
             </div>
         </div>
 
-
-    </div>
+        <div class="post">
+            <div class="post-top">
+                <div class="dp">
+                    <img src="/static/assets/img/card.jpg" alt="">
+                </div>
+                <div class="post-info">
+                    <p class="name">Kyaw Kyaw</p>
+                    <span class="time">2 days ago</span>
+                </div>
+                <i class="fas fa-ellipsis-h "></i>
+            </div>
+            <div class=" post-content">
+                We are One
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                      <div class="carousel-item active">
+                        <img src="..." class="d-block w-100" alt="...">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="..." class="d-block w-100" alt="...">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="..." class="d-block w-100" alt="...">
+                      </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+            </div>
+            <div class="post-bottom">
+                <div class="action">
+                    <i class="fa-regular fa-thumbs-up"></i>
+                    <span>Like</span>
+                </div>
+                <div class="action">
+                    <i class="fa-regular fa-comment"></i>
+                    <span>Comment</span>
+                </div>
+                <div class="action">
+                    <i class="fa fa-share"></i>
+                    <span>Share</span>
+                </div>
+            </div>
+        </div>
+      </div>
     </div>
 
 </main><!-- End #main -->
@@ -513,6 +714,42 @@
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
 <!-- Vendor JS Files -->
+<script>
+
+async function seeEvents(){
+    let data = await fetch('/event',{
+        method : 'GET'
+    })
+    let response = await data.json()
+    console.log(response)
+  var calendarEl = document.getElementById('calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    start :'2024-04-15T00:00:00' ,
+    end : '2024-04-19T00:00:00'
+  });
+  calendar.render();
+ response.forEach(r=>{
+    let timestamp = r.start_date
+    let timestamp2 = r.end_date 
+let date = new Date(timestamp);
+let date2 = new Date(timestamp2)
+let formattedDate = date.toISOString().split('T')[0];
+let formattedDate2 = date2.toISOString().split('T')[0];
+calendar.addEventSource([
+    {
+      title: r.description,
+      start: date,
+      end: date2
+    }
+  ]);
+ })
+ 
+
+}
+
+
+  </script>
 <script src="/static/assets/vendor/apexcharts/apexcharts.min.js"></script>
 <script src="/static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="/static/assets/vendor/chart.js/chart.umd.js"></script>
@@ -521,6 +758,10 @@
 <script src="/static/assets/vendor/simple-datatables/simple-datatables.js"></script>
 <script src="/static/assets/vendor/tinymce/tinymce.min.js"></script>
 <script src="/static/assets/vendor/php-email-form/validate.js"></script>
+<script src="/static/user/index.js"></script>
+<script src="
+https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js
+"></script>
 
 <!-- Template Main JS File -->
 <script src="/static/assets/js/main.js"></script>

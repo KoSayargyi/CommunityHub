@@ -6,29 +6,39 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
-@Table
-@Entity(name = "react")
+@Entity
+@Table(name = "event")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class React implements Serializable {
-
+public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date date;
+    private String description;
+    private Date created_date;
+    private Date start_date;
+    private Date end_date;
     @Enumerated(EnumType.STRING)
-    private Type type;
-
+    private EventType eventType;
+    private Access access;
     @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
-
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
+
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL)
+    private List<Poll> polls;
+
+    @ManyToOne
+    @JoinColumn(name = "user_group_id")
+    private User_Group user_group;
+
+    public enum EventType{
+        EVENT,VOTE
+    }
+
 }

@@ -29,8 +29,8 @@ public class Poll implements Serializable {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @JoinColumn(name = "event_id")
+    private Event event;
 
     public enum  Vote {
         YES,NO;

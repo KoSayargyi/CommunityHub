@@ -1,17 +1,17 @@
 package com.communityHubSystem.communityHub.models;
 
-import com.communityHubSystem.communityHub.repositories.ResourceRepository;
-import jakarta.annotation.Nullable;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,34 +22,45 @@ import java.util.Set;
 @Builder
 public class Post implements Serializable {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
     @Column(nullable = false)
-    private Date created_date;
-    private Date start_date;
-    private Date end_date;
+    private Date createdDate;
     @Enumerated(EnumType.STRING)
     private PostType postType;
+    @Enumerated(EnumType.STRING)
+    private Access access;
 
     public enum PostType{
-        EVENT,CONTENT;
+        EVENT,CONTENT,POLL,RESOURCE
     }
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
-    private Set<Poll> polls;
-
-    @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
-    private Set<Resource> resources;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Resource> resources;
 
     @ManyToOne
     @JoinColumn(name = "user_group_id")
     private User_Group user_group;
+
+
+    @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
+    private Set<React> reacts;
+
+
+    @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
+    private Set<Comment> comments;
+
+
+    @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
+    private Set<Share> shares;
+
 
 }
