@@ -24,4 +24,6 @@ public interface CommunityService {
    public void createGroup(Community community,List<Long> id);
 
     public List<String> getOwnerNamesByCommunityId(Long communityId);
+
+    public List<Community> getAllCommunityWithUserId();
 }

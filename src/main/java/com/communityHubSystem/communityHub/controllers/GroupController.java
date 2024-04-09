@@ -109,4 +109,11 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
+    @GetMapping("/loginUserGroups")
+    @ResponseBody
+    public ResponseEntity<List<Community>> findAllGroupOfCurrentUser(){
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.getAllCommunityWithUserId());
+    }
+
+
 }

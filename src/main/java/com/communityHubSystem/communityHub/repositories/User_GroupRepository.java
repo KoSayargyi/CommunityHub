@@ -8,4 +8,5 @@ import java.util.List;
 public interface User_GroupRepository extends JpaRepository<User_Group,Long> {
 
     List<User_Group> findByCommunityId(Long communityId);
+    List<User_Group> findByUserId(Long userId);
 }

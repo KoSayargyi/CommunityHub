@@ -3,15 +3,11 @@ package com.communityHubSystem.communityHub.impls;
 import com.cloudinary.Cloudinary;
 import com.communityHubSystem.communityHub.dto.PostDto;
 import com.communityHubSystem.communityHub.exception.CommunityHubException;
-import com.communityHubSystem.communityHub.models.Access;
-import com.communityHubSystem.communityHub.models.Post;
-import com.communityHubSystem.communityHub.models.Resource;
-import com.communityHubSystem.communityHub.models.User;
-import com.communityHubSystem.communityHub.repositories.PollRepository;
-import com.communityHubSystem.communityHub.repositories.PostRepository;
-import com.communityHubSystem.communityHub.repositories.ResourceRepository;
+import com.communityHubSystem.communityHub.models.*;
+import com.communityHubSystem.communityHub.repositories.*;
 import com.communityHubSystem.communityHub.services.PostService;
 import com.communityHubSystem.communityHub.services.UserService;
+import com.communityHubSystem.communityHub.services.User_GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +21,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-
+    private final CommunityRepository communityRepository;
+    private final User_GroupRepository user_groupRepository;
     private final PollRepository pollRepository;
     private final PostRepository postRepository;
     private final Cloudinary cloudinary;
@@ -97,6 +94,11 @@ public class PostServiceImpl implements PostService {
         post.setUser(getCurrentLoginUser());
         if(postDTO.getGroupId()!=null){
             post.setAccess(Access.PRIVATE);
+            var user_group = new User_Group();
+            user_group.setUser(getCurrentLoginUser());
+            user_group.setCommunity(communityRepository.findById(Long.valueOf(postDTO.getGroupId())).orElseThrow(()->new CommunityHubException("not found community")));
+            user_groupRepository.save(user_group);
+            post.setUser_group(user_group);
         }else{
             post.setAccess(Access.PUBLIC);
         }

@@ -145,18 +145,22 @@ async function welcome(){
                   let active = index == 0 ? 'active' : ''
                   if(r.photo === null && r.video !== null){
                     post += `<div class="carousel-item ${active}">
+                    <b>${r.description}</b>
                     <video controls src="${r.video}" class="d-block w-100" alt="..."></video>
                   </div>`
                   }else
                   if(r.video === null && r.photo !== null){
                     post += `<div class="carousel-item ${active}">
+                    <b>${r.description}</b>
                     <img src="${r.photo}" class="d-block w-100" alt="...">
                   </div>`
                   }else{
                     post += `<div class="carousel-item ${active}">
+                    <b>${r.description}</b>
                     <video controls src="${r.video}" class="d-block w-100" alt="..."></video>
                   </div>`
                   post += `<div class="carousel-item ${active}">
+                  <b>${r.description}</b>
                   <img src="${r.photo}" class="d-block w-100" alt="...">
                 </div>`
                   }
@@ -220,5 +224,26 @@ async function createEventPost(event) {
 document.getElementById('eventForm').addEventListener('submit', function(event) {
   createEventPost(event);
   document.getElementById('eventForm').reset()
-});
+})
+
+
+async function getAllUserGroup(){
+  let groups = document.getElementById('groupSelect')
+let data = await fetch('/api/community/loginUserGroups')
+let result = await data.json()
+console.log(result)
+let group = ''
+result.forEach((r,index)=>{
+  let active = index === 0 ? 'selected' : ''
+ 
+   group += 
+  `
+ 
+  <option ${active}  value='${r.id}'>${r.description}</option> 
+
+  `
+})
+
+  groups.innerHTML = group
+}
 

@@ -1,5 +1,6 @@
 package com.communityHubSystem.communityHub.impls;
 
+import com.communityHubSystem.communityHub.exception.CommunityHubException;
 import com.communityHubSystem.communityHub.models.Community;
 import com.communityHubSystem.communityHub.models.User;
 import com.communityHubSystem.communityHub.models.User_Group;
@@ -9,6 +10,7 @@ import com.communityHubSystem.communityHub.repositories.User_GroupRepository;
 import com.communityHubSystem.communityHub.services.CommunityService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -102,5 +104,16 @@ public class CommunityServiceImpl implements CommunityService {
         return userGroups.stream().map(userGroup -> userGroup.getUser().getName()).collect(Collectors.toList());
     }
 
+    @Override
+    public List<Community> getAllCommunityWithUserId() {
+        var list = new ArrayList<User_Group>();
+        var user = userRepository.findByStaffId(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new CommunityHubException("not found"));
+        var user_groups =    user_groupRepository.findByUserId(user.getId());
+        var communities = new ArrayList<Community>();
+        for(var u : user_groups){
+            communities.add(communityRepository.findById(u.getCommunity().getId()).orElseThrow(()->new CommunityHubException("not found group")));
+        }
+        return  communities;
+    }
 
 }
