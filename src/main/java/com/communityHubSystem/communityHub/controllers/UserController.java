@@ -6,6 +6,7 @@ import com.communityHubSystem.communityHub.repositories.UserRepository;
 import com.communityHubSystem.communityHub.services.PostService;
 import com.communityHubSystem.communityHub.services.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.Banner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -56,6 +58,7 @@ public class UserController {
         var user = userService.findByStaffId(staffId).orElseThrow();
         System.out.println(user);
         System.out.println(user.getPosts().size());
+        log.info("Post size {}" + user.getPosts().size());
         model.addAttribute("user", user);
         return "/user/user-profile";
     }

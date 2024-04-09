@@ -52,13 +52,11 @@ public class User implements Serializable {
 
 
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Post> posts;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private Set<Post> posts;
 
-    @OneToMany(mappedBy = "user",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<Event> events;
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY) 
+    private Set<Event> events;
 
 
 
