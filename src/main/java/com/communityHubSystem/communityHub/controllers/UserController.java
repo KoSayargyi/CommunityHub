@@ -84,4 +84,10 @@ public class UserController {
         return "User status updated successfully";
     }
 
+    @PostMapping("/updateProfilePhoto")
+    @ResponseBody
+    public ResponseEntity<?> updateProfilePhoto(@ModelAttribute UserDTO userDTO) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateProfilePhoto(userDTO.getFile()));
+    }
+
 }

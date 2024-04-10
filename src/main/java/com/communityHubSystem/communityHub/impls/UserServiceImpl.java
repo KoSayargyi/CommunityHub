@@ -1,6 +1,8 @@
 package com.communityHubSystem.communityHub.impls;
 
+import com.cloudinary.Cloudinary;
 import com.communityHubSystem.communityHub.dto.UserDTO;
+import com.communityHubSystem.communityHub.exception.CommunityHubException;
 import com.communityHubSystem.communityHub.models.*;
 import com.communityHubSystem.communityHub.repositories.UserRepository;
 import com.communityHubSystem.communityHub.services.ExcelUploadService;
@@ -8,21 +10,21 @@ import com.communityHubSystem.communityHub.services.UserService;
 import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-
+    private final List<String> photoExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif", "bmp","tiff","tif","psv","svg","webp","ico","heic");
+    private final Cloudinary cloudinary;
     private final UserRepository userRepository;
     private final ExcelUploadService excelUploadService;
 
@@ -129,6 +131,17 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByStaffId(staffId);
     }
 
+    @Override
+    public User updateProfilePhoto(MultipartFile multipartFile) throws IOException {
+        var found =  userRepository.findByStaffId(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new CommunityHubException("user not found"));
+        if(isValidPhotoExtension(getFileExtension(multipartFile))){
+            found.setPhoto(uploadPhoto(multipartFile));
+        }else {
+            found.setPhoto(found.getPhoto());
+        }
+        return userRepository.save(found);
+    }
+
 
     public static Specification<User> getUserFromSkill(List<String > skillNameList){
         return (root, query, criteriaBuilder) -> {
@@ -157,10 +170,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    public String uploadPhoto(MultipartFile file) throws IOException {
+        return cloudinary.uploader()
+                .upload(file.getBytes(), Map.of( "public_id", UUID.randomUUID().toString()))
+                .get("url").toString();
+    }
 
 
+    public boolean isValidPhotoExtension(String extension) {
+        return photoExtensions.contains(extension);
+    }
 
 
-
+    public String getFileExtension(MultipartFile file){
+        return file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.')).toLowerCase();
+    }
 
 }

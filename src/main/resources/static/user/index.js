@@ -104,7 +104,9 @@ async function createPost(){
         body : data
     })
     document.getElementById('postForm').reset()
+    document.getElementById('groupSelect').innerHTML = ''
     console.log(response)
+    welcome()
 }
 
 
@@ -144,38 +146,42 @@ async function welcome(){
                 p.resources.forEach((r,index)=>{
                   let active = index == 0 ? 'active' : ''
                   if(r.photo === null && r.video !== null){
-                    post += `<div class="carousel-item ${active}">
+                    post += `<div  style="width: 500px; height: 300px; overflow: hidden;" class="carousel-item ${active}" style=>
                     <b>${r.description}</b>
-                    <video controls src="${r.video}" class="d-block w-100" alt="..."></video>
+                    <video controls style="border-radius: 20px; width: 100%; height: 100%; object-fit: cover;" src="${r.video}" class="d-block " alt="..."></video>
                   </div>`
                   }else
                   if(r.video === null && r.photo !== null){
-                    post += `<div class="carousel-item ${active}">
+                    post += `<div  style="width: 500px; height: 300px; overflow: hidden;" class="carousel-item ${active}">
                     <b>${r.description}</b>
-                    <img src="${r.photo}" class="d-block w-100" alt="...">
+                    <img src="${r.photo}" style="border-radius: 20px; width: 100%; height: 100%; object-fit: cover;" class="d-block " alt="...">
                   </div>`
                   }else{
-                    post += `<div class="carousel-item ${active}">
+                    post += `<div  style="width: 500px; height: 300px; overflow: hidden;" class="carousel-item ${active}">
                     <b>${r.description}</b>
-                    <video controls src="${r.video}" class="d-block w-100" alt="..."></video>
+                    <video controls src="${r.video}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;" class="d-block" alt="..."></video>
                   </div>`
-                  post += `<div class="carousel-item ${active}">
+                  post += `<div  style="width: 500px; height: 300px; overflow: hidden;" class="carousel-item ${active}">
                   <b>${r.description}</b>
-                  <img src="${r.photo}" class="d-block w-100" alt="...">
+                  <img src="${r.photo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; " class="d-block" alt="...">
+                </div>
                 </div>`
                   }
                  
                 })
-                
-              post+= `</div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#${p.id}" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#${p.id}" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
+                if(p.resources.length>1){
+                post+=  `
+                  <button class="carousel-control-prev" type="button" data-bs-target="#${p.id}" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#${p.id}" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>`
+                }
+              post+= `
+             
             </div>
       </div>
       <div class="post-bottom">
@@ -218,6 +224,7 @@ async function createEventPost(event) {
     });
     let result = await response.json();
     console.log(result);
+    welcome()
   }
 }
 
@@ -227,8 +234,8 @@ document.getElementById('eventForm').addEventListener('submit', function(event) 
 })
 
 
-async function getAllUserGroup(){
-  let groups = document.getElementById('groupSelect')
+async function getAllUserGroup(num){
+  let groups = document.getElementById('groupSelect'+num)
 let data = await fetch('/api/community/loginUserGroups')
 let result = await data.json()
 console.log(result)
@@ -239,7 +246,7 @@ result.forEach((r,index)=>{
    group += 
   `
  
-  <option ${active}  value='${r.id}'>${r.description}</option> 
+  <option ${active}  value='${r.id}'>${r.name}</option> 
 
   `
 })

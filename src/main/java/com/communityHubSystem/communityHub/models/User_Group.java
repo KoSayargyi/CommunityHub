@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-@Entity
+@Entity(name = "User_Group")
 @Table(name = "user_group")
 @Data
 @NoArgsConstructor
@@ -33,4 +33,7 @@ public class User_Group implements Serializable {
 
     @OneToMany(mappedBy = "user_group",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
     private Set<Post> posts;
+
+    @OneToMany(mappedBy = "user_group",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.LAZY)
+    private Set<Event> events;
 }

@@ -31,6 +31,31 @@
 <body>
 <div th:replace="~{index::header}"></div>
 <div th:replace="~{index::navbar}"></div>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" >
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="photoForm">
+            <input class="form-control" type="file" name="file" id="file" >
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="changeProfilePhoto()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <main id="main" class="main">
 <section class="h-100 gradient-custom-2">
     <div class="container py-5 h-100">
@@ -39,10 +64,12 @@
                 <div class="card">
                     <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
                         <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
-                            <img id="profile-photo" src="/assets/img/default-logo.png" alt="Profile" class="img-fluid img-thumbnail mt-4 mb-2"
-                                 style="width: 150px; z-index: 1" th:if="${user.photo == null}">
-                            <img  th:unless="${user.photo == null}" th:src="${user.photo}" alt="Profile" class="img-fluid img-thumbnail mt-4 mb-2"
-                                 style="width: 150px; z-index: 1" />
+                       <button data-bs-toggle="modal" data-bs-target="#exampleModal" >
+                        <img id="profile-photo" src="/assets/img/default-logo.png" alt="Profile" class="img-fluid img-thumbnail mt-4 mb-2"
+                        style="width: 150px; z-index: 1" th:if="${user.photo == null}">
+                   <img  th:unless="${user.photo == null}" th:src="${user.photo}" alt="Profile" class="img-fluid img-thumbnail mt-4 mb-2"
+                        style="width: 150px; z-index: 1" />
+                       </button>
                             <button id="edit-photo-btn" type="button" class="btn btn-outline-dark edit-button" data-mdb-ripple-color="dark" style="z-index: 1;">Edit Profile</button>
                                 Edit profile
 
@@ -181,6 +208,15 @@
         const modal = bootstrap.Modal.getInstance(profileForm);
         modal.hide();
     });
+
+    async function changeProfilePhoto(){
+        let data = new FormData(document.getElementById('photoForm'))
+        let response = await fetch('/user/updateProfilePhoto',{
+            method : 'POST',
+            body : data
+        })
+        console.log(response)
+    }
 </script>
 </body>
 </html>

@@ -53,7 +53,7 @@ public class PostServiceImpl implements PostService {
 
 
 
-    private boolean isValidPhotoExtension(String extension) {
+    public boolean isValidPhotoExtension(String extension) {
         return photoExtensions.contains(extension);
     }
 
@@ -109,7 +109,7 @@ public class PostServiceImpl implements PostService {
         return userService.findByStaffId(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new CommunityHubException("user not found"));
     }
 
-    private String getFileExtension(MultipartFile file){
+    public String getFileExtension(MultipartFile file){
         return file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.')).toLowerCase();
     }
 

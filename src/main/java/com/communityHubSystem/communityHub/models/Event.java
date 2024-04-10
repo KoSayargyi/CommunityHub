@@ -25,7 +25,7 @@ public class Event {
     private Date start_date;
     private Date end_date;
     @Enumerated(EnumType.STRING)
-    private EventType eventType;
+    private EventType eventType; 
     private Access access;
     @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "id")

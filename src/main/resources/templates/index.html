@@ -31,6 +31,9 @@
     <link href="/static/assets/css/home.css" rel="stylesheet">
     <link href="/static/assets/css/style.css" rel="stylesheet">
     <style>
+        .hidden{
+            display: none;
+        }
         #calendar {
   width: 800px;
   height: 600px;
@@ -437,14 +440,14 @@
         </div>
  
         <nav style="--bs-breadcrumb-divider: '>';">
-        <button type="button" class="btn btn-primary" onclick="getAllUserGroup()" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">
+        <button type="button" class="btn btn-primary" onclick="getAllUserGroup('1')" data-bs-toggle="modal" data-bs-target="#modalDialogScrollable">
             <i class="bx bxl-facebook-square"></i>
                     What's on your mind ?
           </button>
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventCreateModal">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick="getAllUserGroup('2')" data-bs-target="#eventCreateModal">
             Create a event
           </button>
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick="seeEvents()" data-bs-target="#calendar">
+          <button type="button" class="btn btn-primary"   onclick="seeEvents()"  >
            See calender
           </button>
           
@@ -488,7 +491,7 @@
                             <div class="row mb-3">
                               <label class="col-sm-2 col-form-label">Select</label>
                               <div class="col-sm-10" >
-                                <select class="form-select" id="groupSelect" name="groupId" aria-label="Default select example">
+                                <select class="form-select" id="groupSelect1" name="groupId" aria-label="Default select example">
                                    
                                 </select>
                               </div>
@@ -549,6 +552,15 @@
             <input type="text" name="eventType" id="eventType" value="EVENT" hidden>
             <label for="multipartFile">Enter Event Photo</label>
             <input type="file" name="multipartFile" class="form-control" id="multipartFile" >
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Select</label>
+                <div class="col-sm-10" >
+                  <select class="form-select" id="groupSelect2" name="groupId" aria-label="Default select example">
+                     
+                  </select>
+                </div>
+              </div>
          
         </div>
         <div class="modal-footer">
@@ -563,24 +575,7 @@
   <!-- Button trigger modal -->
 
   <!-- Modal -->
-  <div class="modal fade" id="calendar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body"> 
-            <div id="calendar"></div> 
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
-        </div>
-      </div>
-    </div>
-  </div>
-              
-
+ 
      
         <div class="post create">
             <div class="post-top">
@@ -604,7 +599,11 @@
                 </div>
             </div>
         </div>
-        <div id="newsfeed">
+        <div id="cal" class="hidden">
+            <div id="calendar"></div> 
+            <button class="btn btn-primary" onclick="goBack()">Go back</button>
+        </div>
+        <div id="newsfeed" class="hidden">
         <div class="post">
             <div class="post-top">
                 <div class="dp">
@@ -713,7 +712,14 @@
 <!-- Vendor JS Files -->
 <script>
 
+    function goBack(){
+        document.getElementById('cal').classList.add('hidden')
+        document.getElementById('newsfeed').classList.remove('hidden')
+    }
+
 async function seeEvents(){
+    document.getElementById('newsfeed').classList.add('hidden')
+    document.getElementById('cal').classList.remove('hidden')
     let data = await fetch('/event',{
         method : 'GET'
     })

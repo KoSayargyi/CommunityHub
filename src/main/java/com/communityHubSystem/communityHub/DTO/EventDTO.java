@@ -16,5 +16,5 @@ public class EventDTO {
     private String description;
     private String eventType;
     private MultipartFile multipartFile;
-    private Long groupId;
+    private String  groupId;
 }

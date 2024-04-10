@@ -108,10 +108,10 @@ public class CommunityServiceImpl implements CommunityService {
     public List<Community> getAllCommunityWithUserId() {
         var list = new ArrayList<User_Group>();
         var user = userRepository.findByStaffId(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new CommunityHubException("not found"));
-        var user_groups =    user_groupRepository.findByUserId(user.getId());
+        var ids =    user_groupRepository.findDistinctCommunityIdByUserId(user.getId());
         var communities = new ArrayList<Community>();
-        for(var u : user_groups){
-            communities.add(communityRepository.findById(u.getCommunity().getId()).orElseThrow(()->new CommunityHubException("not found group")));
+        for(var id : ids){
+            communities.add(communityRepository.findById(id).orElseThrow(()->new CommunityHubException("not found group")));
         }
         return  communities;
     }
